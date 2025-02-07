@@ -1,5 +1,5 @@
 node{
-
+  def mavenHome =  tool name: "maven3.9.9", type: "maven"
       def buildNumber = BUILD_NUMBER
     
     // To keep last 5 buil only, old one will be delete
@@ -15,7 +15,7 @@ node{
     
      // Build stagee
     stage(" Maven Clean Package"){
-      def mavenHome =  tool name: "maven3.9.9", type: "maven"
+    
       def mavenCMD = "${mavenHome}/bin/mvn"
       sh "${mavenCMD} clean package"
       
@@ -23,7 +23,7 @@ node{
     
       // Build Docker Image
     stage('Build Docker Image'){
-        sh 'docker build -t theamitdeokar/java-web-app .'
+        sh "docker build -t theamitdeokar/java-web-app:${buildNumber} ."
     }
     
 
