@@ -19,7 +19,7 @@ node{
       
      // Build Docker Image
     stage('Build Docker image'){
-    sh "docker build -t theamitdeokar/java-web-app-docker:${buildNumber} ."
+    sh "docker build -t 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber} ."
     } 
    
 
