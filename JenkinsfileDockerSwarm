@@ -19,36 +19,37 @@ node{
       
      // Build Docker Image
     stage('Build Docker image'){
-    sh "docker build -t 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber} ."
+    sh "docker build -t theamitdeokar/java-web-app-docker:${buildNumber} ."
+   // sh "docker build -t 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber} ."
     } 
    
 
 // Docker Login and push image
-    stage('Docker Login and push image'){
+//    stage('Docker Login and push image'){
     
-   sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 686255940829.dkr.ecr.ap-south-1.amazonaws.com"       
+ //  sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 686255940829.dkr.ecr.ap-south-1.amazonaws.com"       
 
-   sh "docker push 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
-    }
+ //  sh "docker push 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
+ //   }
 
-    // Docker Login and push image
-  //  stage('Docker Login and push image'){
- // withCredentials([string(credentialsId: 'DockerHubCredentails', variable: 'DockerHubCredentails')]) {
-  //      sh "docker login -u theamitdeokar -p ${DockerHubCredentails}"
-   //     } 
+     Docker Login and push image
+    stage('Docker Login and push image'){
+  withCredentials([string(credentialsId: 'DockerHubCredentails', variable: 'DockerHubCredentails')]) {
+        sh "docker login -u theamitdeokar -p ${DockerHubCredentails}"
+        } 
 
-  //     sh "docker push theamitdeokar/java-web-app-docker:${buildNumber}" 
+       sh "docker push theamitdeokar/java-web-app-docker:${buildNumber}" 
   
-  //  }
+    }
  
     // Deloy App as Docker swarm cluster in Docker Deployment server
      stage('Deploy App as Docker swarm Container cluster in Docker Deployment server'){
         sshagent(['ubuntudeploymentserver']) {
           
-          sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 686255940829.dkr.ecr.ap-south-1.amazonaws.com"       
+       //   sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 686255940829.dkr.ecr.ap-south-1.amazonaws.com"       
 
-          sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker service create --name javawebapp -p 8080:8080 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
-          
+       //   sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker service create --name javawebapp -p 8080:8080 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
+                 sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.13.14 docker service create --name javawebapp -p 8080:8080 theamitdeokar/java-web-app:${buildNumber}"   
     }
      }
    
