@@ -19,7 +19,7 @@ node{
       
      // Build Docker Image
     stage('Build Docker image'){
-    sh "docker build -t theamitdeokar/java-web-app-docker${buildNumber} ."
+    sh "docker build -t theamitdeokar/java-web-app-docker:${buildNumber} ."
     } 
    
     // Docker Login and push image
