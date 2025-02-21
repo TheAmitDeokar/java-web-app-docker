@@ -1,6 +1,6 @@
 node{
      def mavenHome = tool name: "maven3.9.9"
-     def buildNumber = BUILD_NUMBER
+    // def buildNumber = BUILD_NUMBER
 
 // To keep last 5 buil only, old one will be delete
         properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5', removeLastBuild: true))])
@@ -19,7 +19,7 @@ node{
       
      // Build Docker Image
     stage('Build Docker image'){
-    sh "docker build -t 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber} ."
+    sh "docker build -t 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:1 ."
     } 
    
     // Docker Login and push image
@@ -27,7 +27,7 @@ node{
     
    sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 686255940829.dkr.ecr.ap-south-1.amazonaws.com"       
 
-   sh "docker push 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
+   sh "docker push 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:1"
     }
     
     // Deloy App as Docker swarm cluster in Docker Deployment server
@@ -36,7 +36,7 @@ node{
 
           sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 686255940829.dkr.ecr.ap-south-1.amazonaws.com" 
         
-          sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker service create --name javawebapp -p 8080:8080 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:5"
+          sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker service create --name javawebapp -p 8080:8080 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:1"
           
     }
      }
