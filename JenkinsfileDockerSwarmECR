@@ -39,9 +39,16 @@ node{
           
           sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 686255940829.dkr.ecr.ap-south-1.amazonaws.com"       
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker service rm javawebapp || true"
+
+          sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 'docker rmi \$(docker images -q)'"
+          sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.45.151 'docker rmi \$(docker images -q)'"
+          sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.36.183 'docker rmi \$(docker images -q)'"
+          
+
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker pull 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.45.151 docker pull 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.36.183 docker pull 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
+          
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker service create --name javawebapp --replicas 4 -p 8080:8080 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
         
     }
