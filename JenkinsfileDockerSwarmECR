@@ -37,18 +37,21 @@ node{
      stage('Deploy App as Docker swarm Container cluster in Docker Deployment server'){
         sshagent(['ubuntudeploymentserver']) {
           
-          sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 686255940829.dkr.ecr.ap-south-1.amazonaws.com"       
-          sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker service rm javawebapp || true"
-
+         sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 686255940829.dkr.ecr.ap-south-1.amazonaws.com"       
+        // Remove old service from master node
+         sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker service rm javawebapp || true"
+           
+        // Remove old images from all nodes 
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 'docker rmi \$(docker images -q)' || true"
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.45.151 'docker rmi \$(docker images -q)' || true"
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.36.183 'docker rmi \$(docker images -q)' || true"
           
-
+        // Pull image from ECR to all nodes  
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker pull 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.45.151 docker pull 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.36.183 docker pull 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
           
+          // Create docker service in master node with 4 replica
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker service create --name javawebapp --replicas 4 -p 8080:8080 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
         
     }
