@@ -53,7 +53,7 @@ node{
           sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.36.183 docker pull 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
           
           // Create docker service in master node with 4 replica
-          sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker service create --name javawebapp --replicas 4 -p 8080:8080 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
+          sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.43.211 docker service create --name javawebapp --replicas 4 -p 8080:8080 --network nodeappoverlay 686255940829.dkr.ecr.ap-south-1.amazonaws.com/java-web-app-docker:${buildNumber}"
         
     }
      }
